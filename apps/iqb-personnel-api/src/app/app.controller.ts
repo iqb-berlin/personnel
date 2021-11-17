@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 
-import { Message } from '@personnel/api-interfaces';
+import { Message } from '@personnel/iqb-personnel-dtos';
 
 import { AppService } from './app.service';
 

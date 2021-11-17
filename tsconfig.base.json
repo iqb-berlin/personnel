@@ -15,7 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@personnel/api-interfaces": ["libs/api-interfaces/src/index.ts"]
+      "@personnel/iqb-personnel-dtos": ["libs/iqb-personnel-dtos/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
