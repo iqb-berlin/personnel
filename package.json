@@ -23,6 +23,7 @@
     "@angular/router": "13.0.3",
     "@nestjs/common": "^8.0.0",
     "@nestjs/core": "^8.0.0",
+    "@nestjs/cqrs": "^8.0.1",
     "@nestjs/mapped-types": "^1.0.0",
     "@nestjs/mongoose": "^9.0.1",
     "@nestjs/platform-express": "^8.0.0",
@@ -71,4 +72,3 @@
     "typescript": "4.4.4"
   }
 }
-
