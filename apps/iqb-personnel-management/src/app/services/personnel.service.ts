@@ -7,11 +7,27 @@ import { CreatePersonDto, PersonDto, UpdatePersonDto } from '@personnel/iqb-pers
 
 @Injectable()
 export class PersonnelService {
-  private readonly url: string = 'iqb-personnel-api/person';
+  private readonly url: string = 'iqb-personnel-api/cqrs-person';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+  }
 
-  create(person: CreatePersonDto): Observable<PersonDto> {
+  private static handleError(error: HttpErrorResponse) {
+    if (error.status === 0) {
+      // A client-side or network error occurred. Handle it accordingly.
+      console.error('An error occurred:', error.error);
+    } else {
+      // The backend returned an unsuccessful response code.
+      // The response body may contain clues as to what went wrong.
+      console.error(`Backend returned code ${error.status}, body was: `, error.error);
+    }
+    // Return an observable with a user-facing error message.
+    return throwError(() => new Error(
+      'Something bad happened; please try again later.')
+    );
+  }
+
+  create(person: CreatePersonDto): Observable<PersonDto | void> {
     return this.http
       .post<PersonDto>(this.url, person)
       .pipe(catchError(PersonnelService.handleError));
@@ -29,30 +45,15 @@ export class PersonnelService {
       .pipe(catchError(PersonnelService.handleError));
   }
 
-  update(id: string, updatePersonDto: UpdatePersonDto): Observable<PersonDto> {
+  update(id: string, updatePersonDto: UpdatePersonDto): Observable<PersonDto | void> {
     return this.http
       .patch<PersonDto>(`${this.url}/${id}`, updatePersonDto)
       .pipe(catchError(PersonnelService.handleError));
   }
 
-  delete(id: string): Observable<PersonDto> {
+  delete(id: string): Observable<PersonDto | void> {
     return this.http
       .delete<PersonDto>(`${this.url}/${id}`)
       .pipe(catchError(PersonnelService.handleError));
-  }
-
-  private static handleError(error: HttpErrorResponse) {
-    if (error.status === 0) {
-      // A client-side or network error occurred. Handle it accordingly.
-      console.error('An error occurred:', error.error);
-    } else {
-      // The backend returned an unsuccessful response code.
-      // The response body may contain clues as to what went wrong.
-      console.error(`Backend returned code ${error.status}, body was: `, error.error);
-    }
-    // Return an observable with a user-facing error message.
-    return throwError(
-      'Something bad happened; please try again later.'
-    );
   }
 }

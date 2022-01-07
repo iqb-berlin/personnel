@@ -42,10 +42,9 @@ export class AppComponent implements OnInit {
   }
 
   loadPersonnel(): void {
-    this.personnelService.read().subscribe(personnel => {
-      this.personnel = personnel;
-    }, error => {
-      console.error(`There was an error loading the personnel: ${error}`);
+    this.personnelService.read().subscribe({
+      next: (personnel: PersonDto[]) => this.personnel = personnel,
+      error: (error: unknown) => console.error(`There was an error loading the personnel: ${error}`)
     });
   }
 
@@ -56,21 +55,25 @@ export class AppComponent implements OnInit {
       birthday: AppComponent.randomDate()
     };
 
-    this.personnelService.create(person).subscribe(personDto => {
-      console.log(personDto);
-      this.loadPersonnel();
-      this.greetings = '';
-    }, error => {
-      console.error(`There was an error adding personnel: ${error}`);
+    this.personnelService.create(person).subscribe({
+      next: (personDto: PersonDto | void) => {
+        if (personDto) {
+          console.log(personDto);
+        }
+        this.loadPersonnel();
+        this.greetings = '';
+      },
+      error: (error: unknown) => console.error(`There was an error adding personnel: ${error}`)
     });
   }
 
   readPerson(personId: string): void {
-    this.personnelService.readById(personId).subscribe(personDto => {
-      console.log(personDto);
-      this.greetings = JSON.stringify(personDto);
-    }, error => {
-      console.error(`There was an error reading personnel: ${error}`);
+    this.personnelService.readById(personId).subscribe({
+      next: (personDto: PersonDto) => {
+        console.log(personDto);
+        this.greetings = JSON.stringify(personDto);
+      },
+      error: (error: unknown) => console.error(`There was an error reading personnel: ${error}`)
     });
   }
 
@@ -87,12 +90,15 @@ export class AppComponent implements OnInit {
           surname: surname,
           birthday: person.birthday
         };
-        this.personnelService.update(person.id, updatePersonDto).subscribe(personDto => {
-          console.log(personDto);
-          this.loadPersonnel();
-          this.greetings = '';
-        }, error => {
-          console.error(`There was an error updating personnel: ${error}`);
+        this.personnelService.update(person.id, updatePersonDto).subscribe({
+          next: (personDto: PersonDto | void) => {
+            if (personDto) {
+              console.log(personDto);
+            }
+            this.loadPersonnel();
+            this.greetings = '';
+          },
+          error: (error: unknown) => console.error(`There was an error updating personnel: ${error}`)
         });
       }
     });
@@ -101,12 +107,15 @@ export class AppComponent implements OnInit {
   deletePerson(personId: string): void {
     this.personnel.forEach(value => {
       if (value.id === personId) {
-        this.personnelService.delete(personId).subscribe(personDto => {
-          console.log(personDto);
-          this.loadPersonnel();
-          this.greetings = '';
-        }, error => {
-          console.error(`There was an error deleting personnel: ${error}`);
+        this.personnelService.delete(personId).subscribe({
+          next: (personDto: PersonDto | void) => {
+            if (personDto) {
+              console.log(personDto);
+            }
+            this.loadPersonnel();
+            this.greetings = '';
+          },
+          error: (error: unknown) => console.error(`There was an error deleting personnel: ${error}`)
         });
       }
     });
