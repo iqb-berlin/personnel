@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { HydratedDocument, Model } from 'mongoose';
-import { Person, PersonDocument } from './schemas/person.schema';
+import { Person, PersonDocument } from './schema/person.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreatePersonDto, PersonDto, UpdatePersonDto } from '@personnel/iqb-personnel-dtos';
 
