@@ -1,12 +1,14 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreatePersonDto, PersonDto, UpdatePersonDto } from '@personnel/iqb-personnel-dtos';
+import { JwtAuthGuard } from '../authentication/guard/jwt-auth.guard';
 import { AddPersonCommand } from './command/add-person.command';
 import { UpdatePersonCommand } from './command/update-person.command';
 import { RemovePersonCommand } from './command/remove-person.command';
 import { FindAllPersonsQuery } from './query/find-all-persons.query';
 import { FindPersonByIdQuery } from './query/find-person-by-id.query';
 
+@UseGuards(JwtAuthGuard)
 @Controller('cqrs-person')
 export class CqrsPersonController {
   constructor(

@@ -1,7 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
-import { PersonService } from './person.service';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { CreatePersonDto, PersonDto, UpdatePersonDto } from '@personnel/iqb-personnel-dtos';
+import { JwtAuthGuard } from '../authentication/guard/jwt-auth.guard';
+import { PersonService } from './person.service';
 
+@UseGuards(JwtAuthGuard)
 @Controller('person')
 export class PersonController {
   constructor(private readonly personService: PersonService) {
