@@ -1,0 +1,14 @@
+<h2>Login:</h2>
+<form #f='ngForm' (ngSubmit)='login(f.value)'>
+  <div>
+    Username: <input name='username' ngModel>
+  </div>
+  <div>
+    Password: <input type='password' name='password' ngModel=''>
+  </div>
+
+  <button mat-raised-button type='submit'>Login</button>
+
+  <h3 *ngIf='wrongCredentials'>{{ infoMessage }}</h3>
+
+</form>
