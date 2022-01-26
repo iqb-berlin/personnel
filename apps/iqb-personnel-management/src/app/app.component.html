@@ -1,17 +1,10 @@
-<h1>IQB Personnel Management</h1>
-<h2>Personnel:</h2>
-<ul>
-  <li *ngFor="let p of personnel" class="personnel">
-    {{ p.surname }}, {{ p.forename }}, *{{ p.birthday | date: 'dd.MM.YYYY' }} |
-    <button (click)="readPerson(p.id)">Details</button> |
-    <button (click)="updatePerson(p)">Update</button> |
-    <button (click)="deletePerson(p.id)">Delete</button> |
-    <button (click)="sayHelloTo(p)">Say Hello</button>
-  </li>
-</ul>
-
-<button mat-raised-button (click)="addPerson()">Add Person</button>
-
-<h2>{{ greetings }}</h2>
-
-<router-outlet></router-outlet>
+<div>
+  <header class='header header-3'>
+    <h1>IQB Personnel Management</h1>
+  </header>
+  <div class='content-container'>
+    <div class='content-area'>
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

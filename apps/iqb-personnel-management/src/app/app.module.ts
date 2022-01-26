@@ -1,25 +1,28 @@
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-
 import { HttpClientModule } from '@angular/common/http';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { AppComponent } from './app.component';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+import { PersonnelComponent } from './personnel/personnel.component';
 import { PersonnelService } from './services/personnel.service';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    PersonnelComponent
   ],
   imports: [
-    BrowserModule,
-    HttpClientModule,
     AppRoutingModule,
+    BrowserModule,
     BrowserAnimationsModule,
-    MatButtonModule
+    HttpClientModule,
+    MatButtonModule,
   ],
   providers: [PersonnelService],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}

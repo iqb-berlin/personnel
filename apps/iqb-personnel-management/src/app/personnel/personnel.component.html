@@ -1,0 +1,14 @@
+<h2>Personnel:</h2>
+<ul>
+  <li *ngFor="let p of personnel" class="personnel">
+    {{ p.surname }}, {{ p.forename }}, *{{ p.birthday | date: 'dd.MM.YYYY' }} |
+    <button (click)="readPerson(p.id)">Details</button> |
+    <button (click)="updatePerson(p)">Update</button> |
+    <button (click)="deletePerson(p.id)">Delete</button> |
+    <button (click)="sayHelloTo(p)">Say Hello</button>
+  </li>
+</ul>
+
+<button mat-raised-button (click)="addPerson()">Add Person</button>
+
+<h3>{{ infoMessage }}</h3>
