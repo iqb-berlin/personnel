@@ -1,0 +1,14 @@
+<h2>Users:</h2>
+<ul>
+  <li *ngFor="let user of users" class="users">
+    username: {{ user.name }}, password: {{ user.password }} |
+    <button (click)="readUser(user.id)">Details</button> |
+    <button (click)="updateUser(user)">Update</button> |
+    <button (click)="deleteUser(user.id)">Delete</button> |
+  </li>
+</ul>
+
+<button mat-raised-button (click)="addUser()">Add User</button>
+
+<h3>{{ infoMessage }}</h3>
+

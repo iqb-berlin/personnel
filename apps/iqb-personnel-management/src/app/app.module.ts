@@ -9,16 +9,19 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './authentication/login/login.component';
 import { PersonnelComponent } from './personnel/personnel.component';
+import { UserComponent } from './user/user.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { AuthenticationInterceptor } from './authentication/authentication.interceptor';
 import { AuthenticationGuardService } from './authentication/authentication-guard.service';
 import { PersonnelService } from './services/personnel.service';
+import { UserService } from './services/user.service';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     PersonnelComponent,
+    UserComponent,
     NotFoundComponent,
   ],
   imports: [
@@ -37,6 +40,7 @@ import { PersonnelService } from './services/personnel.service';
     },
     AuthenticationGuardService,
     PersonnelService,
+    UserService,
   ],
   bootstrap: [AppComponent],
 })
