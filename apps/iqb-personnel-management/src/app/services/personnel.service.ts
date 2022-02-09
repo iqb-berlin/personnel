@@ -3,14 +3,17 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { CreatePersonDto, PersonDto, UpdatePersonDto } from '@personnel/iqb-personnel-dtos';
+import {
+  CreatePersonDto,
+  PersonDto,
+  UpdatePersonDto,
+} from '@personnel/iqb-personnel-dtos';
 
 @Injectable()
 export class PersonnelService {
-  private readonly url: string = 'iqb-personnel-api/cqrs-person';
+  private readonly url: string = 'iqb-personnel-api/person';
 
-  constructor(private http: HttpClient) {
-  }
+  constructor(private http: HttpClient) {}
 
   private static handleError(error: HttpErrorResponse) {
     if (error.status === 0) {
@@ -19,11 +22,14 @@ export class PersonnelService {
     } else {
       // The backend returned an unsuccessful response code.
       // The response body may contain clues as to what went wrong.
-      console.error(`Backend returned code ${error.status}, body was: `, error.error);
+      console.error(
+        `Backend returned code ${error.status}, body was: `,
+        error.error
+      );
     }
     // Return an observable with a user-facing error message.
-    return throwError(() => new Error(
-      'Something bad happened; please try again later.')
+    return throwError(
+      () => new Error('Something bad happened; please try again later.')
     );
   }
 
@@ -45,7 +51,10 @@ export class PersonnelService {
       .pipe(catchError(PersonnelService.handleError));
   }
 
-  update(id: string, updatePersonDto: UpdatePersonDto): Observable<PersonDto | void> {
+  update(
+    id: string,
+    updatePersonDto: UpdatePersonDto
+  ): Observable<PersonDto | void> {
     return this.http
       .patch<PersonDto>(`${this.url}/${id}`, updatePersonDto)
       .pipe(catchError(PersonnelService.handleError));
