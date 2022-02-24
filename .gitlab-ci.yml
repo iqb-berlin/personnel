@@ -1,0 +1,49 @@
+image: node:lts-alpine
+stages:
+  - setup
+  - build
+  - test
+
+install-dependencies:
+  stage: setup
+  interruptible: true
+  only:
+    - master
+    - merge_requests
+  cache:
+    key:
+      files:
+        - yarn.lock
+    paths:
+      - node_modules
+      - .yarn
+  script:
+    - yarn install --pure-lockfile --cache-folder .yarn
+  artifacts:
+    paths:
+      - node_modules
+
+.distributed:
+  interruptible: true
+  only:
+    - master
+    - merge_requests
+  needs:
+    - install-dependencies
+  artifacts:
+    paths:
+      - node_modules/.cache/nx
+
+build:
+  stage: build
+  extends: .distributed
+  script:
+    - apk update && apk add git
+    - yarn nx affected --base=HEAD~1 --target=build --parallel=3
+
+test:
+  stage: test
+  extends: .distributed
+  script:
+    - apk update && apk add git
+    - yarn nx affected --base=HEAD~1 --target=test --parallel=2
