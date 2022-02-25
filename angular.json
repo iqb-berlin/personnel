@@ -8,12 +8,17 @@
       "architect": {
         "build": {
           "builder": "@nrwl/node:build",
-          "outputs": ["{options.outputPath}"],
+          "outputs": [
+            "{options.outputPath}"
+          ],
           "options": {
             "outputPath": "dist/apps/iqb-personnel-api",
             "main": "apps/iqb-personnel-api/src/main.ts",
             "tsConfig": "apps/iqb-personnel-api/tsconfig.app.json",
-            "assets": ["apps/iqb-personnel-api/src/assets"]
+            "assets": [
+              "apps/iqb-personnel-api/src/assets"
+            ],
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
@@ -37,17 +42,33 @@
         },
         "lint": {
           "builder": "@nrwl/linter:eslint",
-          "outputs": ["{options.outputFile}"],
+          "outputs": [
+            "{options.outputFile}"
+          ],
           "options": {
-            "lintFilePatterns": ["apps/iqb-personnel-api/**/*.ts"]
+            "lintFilePatterns": [
+              "apps/iqb-personnel-api/**/*.ts"
+            ]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/iqb-personnel-api"],
+          "outputs": [
+            "coverage/apps/iqb-personnel-api"
+          ],
           "options": {
             "jestConfig": "apps/iqb-personnel-api/jest.config.js",
             "passWithNoTests": true
+          }
+        },
+        "deploy": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "docker build -f dockerfile.backend --build-arg project=iqb-personnel-api -t scm.cms.hu-berlin.de:4567/woltesve/personnel/iqbberlin/personnel-backend:latest .",
+              "docker push scm.cms.hu-berlin.de:4567/woltesve/personnel/iqbberlin/personnel-backend:latest"
+            ],
+            "parallel": false
           }
         }
       },
@@ -60,9 +81,13 @@
       "architect": {
         "lint": {
           "builder": "@nrwl/linter:eslint",
-          "outputs": ["{options.outputFile}"],
+          "outputs": [
+            "{options.outputFile}"
+          ],
           "options": {
-            "lintFilePatterns": ["libs/iqb-personnel-dtos/**/*.ts"]
+            "lintFilePatterns": [
+              "libs/iqb-personnel-dtos/**/*.ts"
+            ]
           }
         }
       },
@@ -76,7 +101,9 @@
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
-          "outputs": ["{options.outputPath}"],
+          "outputs": [
+            "{options.outputPath}"
+          ],
           "options": {
             "outputPath": "dist/apps/iqb-personnel-management",
             "index": "apps/iqb-personnel-management/src/index.html",
@@ -88,7 +115,9 @@
               "apps/iqb-personnel-management/src/favicon.ico",
               "apps/iqb-personnel-management/src/assets"
             ],
-            "styles": ["apps/iqb-personnel-management/src/styles.scss"],
+            "styles": [
+              "apps/iqb-personnel-management/src/styles.scss"
+            ],
             "scripts": []
           },
           "configurations": {
@@ -156,10 +185,22 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/iqb-personnel-management"],
+          "outputs": [
+            "coverage/apps/iqb-personnel-management"
+          ],
           "options": {
             "jestConfig": "apps/iqb-personnel-management/jest.config.js",
             "passWithNoTests": true
+          }
+        },
+        "deploy": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "docker build -f dockerfile.frontend --build-arg project=iqb-personnel-management -t scm.cms.hu-berlin.de:4567/woltesve/personnel/iqbberlin/personnel-frontend:latest .",
+              "docker push scm.cms.hu-berlin.de:4567/woltesve/personnel/iqbberlin/personnel-frontend:latest"
+            ],
+            "parallel": false
           }
         }
       },
@@ -185,7 +226,9 @@
         },
         "lint": {
           "builder": "@nrwl/linter:eslint",
-          "outputs": ["{options.outputFile}"],
+          "outputs": [
+            "{options.outputFile}"
+          ],
           "options": {
             "lintFilePatterns": [
               "apps/iqb-personnel-management-e2e/**/*.{js,ts}"
@@ -194,7 +237,9 @@
         }
       },
       "tags": [],
-      "implicitDependencies": ["iqb-personnel-management"]
+      "implicitDependencies": [
+        "iqb-personnel-management"
+      ]
     }
   }
 }

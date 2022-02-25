@@ -1,0 +1,57 @@
+version: '3'
+
+services:
+  db:
+    container_name: mongodb
+    image: mongo:5
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGODB_DATABASE: personnel
+    volumes:
+      - db_vol:/usr/src/iqb-personnel-db/
+    networks:
+      - iqb_personnel_net
+
+  backend:
+    build:
+      context: .
+      dockerfile: dockerfile.backend
+      args:
+        project: iqb-personnel-api
+    image: iqbberlin/personnel-backend:latest
+    ports:
+      - "8003:3333"
+    restart: on-failure
+    volumes:
+      - backend_vol:/usr/src/iqb-personnel-api/
+      - node_modules:/usr/src/iqb-personnel-api/node_modules/
+    networks:
+      - iqb_personnel_net
+
+  frontend:
+    build:
+      context: .
+      dockerfile: dockerfile.frontend
+      args:
+        project: iqb-personnel-management
+    image: iqbberlin/personnel-frontend:latest
+    ports:
+      - "8000:80"
+    restart: on-failure
+    volumes:
+      - frontend_vol:/usr/src/iqb-personnel-management/
+      - node_modules:/usr/src/iqb-personnel-management/node_modules/
+    networks:
+      - iqb_personnel_net
+
+volumes:
+  db_vol:
+  frontend_vol:
+  backend_vol:
+  node_modules:
+
+networks:
+  iqb_personnel_net:
+    driver: bridge

@@ -1,0 +1,10 @@
+FROM node:lts-alpine
+
+WORKDIR /test
+
+COPY . .
+
+RUN npm install --ignore-scripts --silent
+
+ARG project
+RUN npx nx test $project

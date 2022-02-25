@@ -1,8 +1,19 @@
 image: node:lts-alpine
+
+variables:
+  DOCKER_TLS_CERTDIR: ""
+  FRONTEND_IMAGE_NAME: "iqbberlin/personnel-frontend"
+  BACKEND_IMAGE_NAME: "iqbberlin/personnel-backend"
+
+  services:
+    docker:dind
+
 stages:
   - setup
   - build
   - test
+  - packetize
+  - deploy
 
 install-dependencies:
   stage: setup
@@ -13,12 +24,12 @@ install-dependencies:
   cache:
     key:
       files:
-        - yarn.lock
+        - package-lock.json
     paths:
       - node_modules
-      - .yarn
+      - .npm/
   script:
-    - yarn install --pure-lockfile --cache-folder .yarn
+    - npm ci --cache .npm
   artifacts:
     paths:
       - node_modules
@@ -34,16 +45,67 @@ install-dependencies:
     paths:
       - node_modules/.cache/nx
 
-build:
+build-app:
   stage: build
   extends: .distributed
   script:
     - apk update && apk add git
-    - yarn nx affected --base=HEAD~1 --target=build --parallel=3
+    - npx nx affected --base=HEAD~1 --target=build --parallel=3
+  artifacts:
+    paths:
+      - dist
 
-test:
+.distributed-docker:
+  interruptible: true
+  only:
+    - master
+    - merge_requests
+  extends: .distributed
+  needs:
+    - install-dependencies
+    - build-app
+
+test-app:
   stage: test
   extends: .distributed
   script:
     - apk update && apk add git
-    - yarn nx affected --base=HEAD~1 --target=test --parallel=2
+    - npx nx affected --base=HEAD~1 --target=test --parallel=2
+
+build-docker-image:
+  stage: packetize
+  extends: .distributed-docker
+  image: docker:git
+  services:
+    - docker:dind
+  before_script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
+  script:
+    - apk update && apk add npm
+    - npm i -g npx
+    - npx nx affected --base=HEAD~1 --target=deploy --parallel=2
+  after_script:
+    - docker logout $CI_REGISTRY
+
+deploy-docker-images:
+  stage: deploy
+  extends: .distributed-docker
+  image: docker:git
+  services:
+    - docker:dind
+  before_script:
+    - export REVISION=$(git rev-parse --short HEAD)
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
+    #- echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+  script:
+    - docker build -f dockerfile.backend --build-arg project=iqb-personnel-api -t $CI_REGISTRY/woltesve/personnel/${BACKEND_IMAGE_NAME}:${REVISION} .
+    - docker build -f dockerfile.frontend --build-arg project=iqb-personnel-management -t $CI_REGISTRY/woltesve/personnel/${FRONTEND_IMAGE_NAME}:${REVISION} .
+    #- docker build -f dockerfile.backend --build-arg project=iqb-personnel-api -t ${BACKEND_IMAGE_NAME}:${REVISION} .
+    #- docker build -f dockerfile.frontend --build-arg project=iqb-personnel-management -t ${FRONTEND_IMAGE_NAME}:${REVISION} .
+    - docker push $CI_REGISTRY/woltesve/personnel/${BACKEND_IMAGE_NAME}:${REVISION}
+    - docker push $CI_REGISTRY/woltesve/personnel/${FRONTEND_IMAGE_NAME}:${REVISION}
+    #- docker push iqbberlin/personnel-backend:${REVISION}
+    #- docker push iqbberlin/personnel-frontend:${REVISION}
+  after_script:
+    - docker logout $CI_REGISTRY
+    #- docker logout
