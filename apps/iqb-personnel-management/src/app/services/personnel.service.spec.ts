@@ -1,5 +1,4 @@
 import { TestBed } from '@angular/core/testing';
-
 import { HttpClient, HttpHandler } from '@angular/common/http';
 import { PersonnelService } from './personnel.service';
 
@@ -8,11 +7,7 @@ describe('PersonnelService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        PersonnelService,
-        HttpClient,
-        HttpHandler
-      ]
+      providers: [PersonnelService, HttpClient, HttpHandler],
     });
     service = TestBed.inject(PersonnelService);
   });
