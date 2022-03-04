@@ -1,9 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PersonController } from './person.controller';
 import { PersonService } from './person.service';
+import { PersonController } from './person.controller';
 
 jest.mock('./person.service');
-const personService = PersonService as jest.MockedClass<typeof PersonService>;
 
 describe('PersonController', () => {
   let controller: PersonController;

@@ -1,9 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
-
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { Message } from '@personnel/iqb-personnel-dtos';
 
+import { AuthenticationService } from './authentication/authentication.service';
+import { AppService } from './app.service';
+import { AppController } from './app.controller';
+
+jest.mock('./authentication/authentication.service');
 jest.mock('./app.service');
 const appService = AppService as jest.MockedClass<typeof AppService>;
 
@@ -13,7 +15,7 @@ describe('AppController', () => {
   beforeAll(async () => {
     app = await Test.createTestingModule({
       controllers: [AppController],
-      providers: [AppService]
+      providers: [AppService, AuthenticationService],
     }).compile();
   });
 
@@ -21,9 +23,11 @@ describe('AppController', () => {
     it('should return "Welcome to iqb-personnel-api!"', () => {
       // Arrange
       const expectedMessage = { message: 'Welcome to iqb-personnel-api!' };
-      const getDataMock = appService.prototype.getData.mockImplementation((): Message => {
-        return expectedMessage;
-      });
+      const getDataMock = appService.prototype.getData.mockImplementation(
+        (): Message => {
+          return expectedMessage;
+        }
+      );
 
       // Act
       const appController = app.get<AppController>(AppController);
@@ -34,5 +38,4 @@ describe('AppController', () => {
       expect(actualMessage).toBe(expectedMessage);
     });
   });
-
 });

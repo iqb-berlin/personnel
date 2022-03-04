@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CqrsPersonController } from './cqrs-person.controller';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { CqrsPersonController } from './cqrs-person.controller';
 
 describe('CqrsPersonController', () => {
   let controller: CqrsPersonController;

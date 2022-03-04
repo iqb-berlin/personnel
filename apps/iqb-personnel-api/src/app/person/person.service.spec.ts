@@ -1,8 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PersonService } from './person.service';
 import { getModelToken, MongooseModule } from '@nestjs/mongoose';
-import { Person, PersonDocument, PersonSchema } from './schema/person.schema';
 import { Model } from 'mongoose';
+
+import { PersonService } from './person.service';
+import { Person, PersonDocument, PersonSchema } from './schema/person.schema';
 
 describe('PersonService', () => {
   let service: PersonService;

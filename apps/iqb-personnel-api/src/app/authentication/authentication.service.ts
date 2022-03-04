@@ -7,7 +7,7 @@ import { jwtConstants } from './constants';
 @Injectable()
 export class AuthenticationService {
   constructor(
-    private usersService: UserService,
+    private userService: UserService,
     private jwtService: JwtService
   ) {}
 
@@ -15,7 +15,7 @@ export class AuthenticationService {
     username: string,
     password: string
   ): Promise<{ id: string; name: string }> {
-    const user = await this.usersService.findByName(username);
+    const user = await this.userService.findByName(username);
 
     if (user && user.password === password) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
