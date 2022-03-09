@@ -61,12 +61,16 @@
             "passWithNoTests": true
           }
         },
-        "deploy": {
+        "docker-build": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "docker build -f dockerfile.backend --build-arg project=iqb-personnel-api -t scm.cms.hu-berlin.de:4567/woltesve/personnel/iqbberlin/personnel-backend:latest .",
-              "docker push scm.cms.hu-berlin.de:4567/woltesve/personnel/iqbberlin/personnel-backend:latest"
+              {
+                "command": "docker login {args.registry}",
+                "forwardAllArgs": false
+              },
+              "docker build -f dockerfile.backend --build-arg project=iqb-personnel-api -t {args.registry}{args.registryProject}iqbberlin/personnel-backend:{args.tag} .",
+              "docker push {args.registry}{args.registryProject}iqbberlin/personnel-backend:{args.tag}"
             ],
             "parallel": false
           }
@@ -193,12 +197,16 @@
             "passWithNoTests": true
           }
         },
-        "deploy": {
+        "docker-build": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "docker build -f dockerfile.frontend --build-arg project=iqb-personnel-management -t scm.cms.hu-berlin.de:4567/woltesve/personnel/iqbberlin/personnel-frontend:latest .",
-              "docker push scm.cms.hu-berlin.de:4567/woltesve/personnel/iqbberlin/personnel-frontend:latest"
+              {
+                "command": "docker login {args.registry}",
+                "forwardAllArgs": false
+              },
+              "docker build -f dockerfile.frontend --build-arg project=iqb-personnel-management -t {args.registry}{args.registryProject}iqbberlin/personnel-frontend:{args.tag} .",
+              "docker push {args.registry}{args.registryProject}iqbberlin/personnel-frontend:{args.tag}"
             ],
             "parallel": false
           }

@@ -1,7 +1,7 @@
 .PHONY: build deploy
 
 build: ## Build docker image
-	npx nx run-many --target=build --projects=iqb-personnel-api,iqb-personnel-management --parallel
+	npx nx run-many --target=build --all --parallel
 	docker-compose build
 
 deploy:build

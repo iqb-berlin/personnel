@@ -1,13 +1,5 @@
 image: node:lts-alpine
 
-variables:
-  DOCKER_TLS_CERTDIR: ""
-  FRONTEND_IMAGE_NAME: "iqbberlin/personnel-frontend"
-  BACKEND_IMAGE_NAME: "iqbberlin/personnel-backend"
-
-  services:
-    docker:dind
-
 stages:
   - setup
   - build
@@ -55,16 +47,6 @@ build-app:
     paths:
       - dist
 
-.distributed-docker:
-  interruptible: true
-  only:
-    - master
-    - merge_requests
-  extends: .distributed
-  needs:
-    - install-dependencies
-    - build-app
-
 test-app:
   stage: test
   extends: .distributed
@@ -74,38 +56,25 @@ test-app:
 
 build-docker-image:
   stage: packetize
-  extends: .distributed-docker
+  extends: .distributed
+  needs:
+    - install-dependencies
+    - build-app
   image: docker:git
+  variables:
+    DOCKER_TLS_CERTDIR: ""
+    REGISTRY: $CI_REGISTRY
+    REGISTRY_USER: $CI_REGISTRY_USER
+    REGISTRY_PASSWORD: $CI_REGISTRY_PASSWORD
+    REGISTRY_PROJECT: "/${CI_PROJECT_PATH}/"
   services:
     - docker:dind
   before_script:
-    - echo "$CI_REGISTRY_PASSWORD" | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
-  script:
     - apk update && apk add npm
     - npm i -g npx
-    - npx nx affected --base=HEAD~1 --target=deploy --parallel=2
-  after_script:
-    - docker logout $CI_REGISTRY
-
-deploy-docker-images:
-  stage: deploy
-  extends: .distributed-docker
-  image: docker:git
-  services:
-    - docker:dind
-  before_script:
-    - export REVISION=$(git rev-parse --short HEAD)
-    - echo "$CI_REGISTRY_PASSWORD" | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
-    #- echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+    - export TAG=$(git rev-parse --short HEAD)
+    - echo "$REGISTRY_PASSWORD" | docker login -u $REGISTRY_USER --password-stdin $REGISTRY
   script:
-    - docker build -f dockerfile.backend --build-arg project=iqb-personnel-api -t $CI_REGISTRY/woltesve/personnel/${BACKEND_IMAGE_NAME}:${REVISION} .
-    - docker build -f dockerfile.frontend --build-arg project=iqb-personnel-management -t $CI_REGISTRY/woltesve/personnel/${FRONTEND_IMAGE_NAME}:${REVISION} .
-    #- docker build -f dockerfile.backend --build-arg project=iqb-personnel-api -t ${BACKEND_IMAGE_NAME}:${REVISION} .
-    #- docker build -f dockerfile.frontend --build-arg project=iqb-personnel-management -t ${FRONTEND_IMAGE_NAME}:${REVISION} .
-    - docker push $CI_REGISTRY/woltesve/personnel/${BACKEND_IMAGE_NAME}:${REVISION}
-    - docker push $CI_REGISTRY/woltesve/personnel/${FRONTEND_IMAGE_NAME}:${REVISION}
-    #- docker push iqbberlin/personnel-backend:${REVISION}
-    #- docker push iqbberlin/personnel-frontend:${REVISION}
+    - npx nx affected --base=HEAD~1 --target=docker-build --registry=$REGISTRY --registryProject=$REGISTRY_PROJECT --tag=$TAG --parallel=2
   after_script:
-    - docker logout $CI_REGISTRY
-    #- docker logout
+    - docker logout $REGISTRY
